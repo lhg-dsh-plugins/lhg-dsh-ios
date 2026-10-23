@@ -1,0 +1,135 @@
+{
+  "name": "@zseven-w/dsh-ios",
+  "version": "0.1.0-rc.11",
+  "description": "DeepSeek Harness plugin for the iOS Simulator — build, run, and interact with a live simulator stream inside a conversation. Tested with DSH 0.1.5-rc.1.",
+  "license": "MIT",
+  "keywords": [
+    "dsh",
+    "simulator",
+    "ios-simulator",
+    "plugin",
+    "ios"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lhg-dsh-plugins/lhg-dsh-ios"
+  },
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=24.11.0"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./client": {
+      "types": "./lib/types/client/index.d.ts",
+      "default": "./lib/client.js"
+    },
+    "./driver": {
+      "types": "./lib/qa-driver.d.ts",
+      "default": "./lib/qa-driver.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "src",
+    "scripts",
+    "assets/preview-host/**",
+    "assets/qa-wda-simulator/**",
+    "assets/ocr.swift",
+    "cordis.patch.yml",
+    "README.md",
+    "README.*.md",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "scripts": {
+    "build": "node scripts/run-tool.mjs tsc -p tsconfig.json && pnpm run build:client",
+    "build:client": "node scripts/run-tool.mjs tsc -p tsconfig.client.json && node scripts/run-tool.mjs tsdown src/client/index.tsx --config tsdown.config.mjs --format cjs --platform browser --target es2022 --tsconfig tsconfig.client.json --out-dir .client-build --clean --sourcemap --logLevel warn && node scripts/build-client.mjs",
+    "typecheck": "node scripts/run-tool.mjs tsc -p tsconfig.json && node scripts/run-tool.mjs tsc -p tsconfig.client.json",
+    "test:wda-simulator-input": "node scripts/dev-wda-simulator-input-smoke.mjs",
+    "test:wda-targeted-text": "node scripts/dev-wda-targeted-text-smoke.mjs",
+    "test:qa-physical-targeted": "node scripts/dev-qa-physical-targeted-smoke.mjs",
+    "test:qa-runtime": "node scripts/dev-wda-physical-stage-smoke.mjs && node scripts/dev-usbmux-listener-probe-smoke.mjs && node scripts/dev-qa-physical-default-smoke.mjs && node scripts/dev-qa-sim-recovery-smoke.mjs && node scripts/dev-wda-simulator-input-release-subprocess.mjs",
+    "test": "node scripts/dev-plugin-env-smoke.mjs && node scripts/dev-signing-smoke.mjs && node scripts/dev-devicectl-smoke.mjs && node scripts/dev-realtools-smoke.mjs && node scripts/dev-realstart-smoke.mjs && node scripts/dev-panel-smoke.mjs && node scripts/dev-wda-smoke.mjs && node scripts/dev-uitree-smoke.mjs && node scripts/dev-wda-simulator-input-smoke.mjs && node scripts/dev-wda-targeted-text-smoke.mjs && node scripts/dev-qa-driver-smoke.mjs && node scripts/dev-qa-physical-targeted-smoke.mjs && node scripts/dev-logs-smoke.mjs && node scripts/dev-debug-smoke.mjs && npm run test:qa-runtime"
+  },
+  "packageManager": "pnpm@10.12.1",
+  "pnpm": {
+    "autoInstallPeers": true,
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  },
+  "dependencies": {
+    "serve-sim": "^0.1.45"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-renderer",
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-conversation",
+        "@deepseek-ai/dsh-client-ui-tool",
+        "@deepseek-ai/dsh-client-ui-theme"
+      ],
+      "platform": "web"
+    }
+  },
+  "dshHostRuntime": {
+    "server": {
+      "requiredServices": ["tools"],
+      "optionalServices": ["skills", "webServer"],
+      "requiredPackages": {
+        "@deepseek-ai/dsh-tools": "0.1.5-rc.1"
+      }
+    },
+    "client": {
+      "requiredPackages": {
+        "@deepseek-ai/dsh-client-locale": "0.1.5-rc.1",
+        "@deepseek-ai/dsh-client-ui-conversation": "0.1.5-rc.1",
+        "@deepseek-ai/dsh-client-ui-renderer": "0.1.5-rc.1",
+        "@deepseek-ai/dsh-client-ui-theme": "0.1.5-rc.1",
+        "@deepseek-ai/dsh-client-ui-tool": "0.1.5-rc.1",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0"
+      },
+      "resolution": "not exercised by the server/headless plugin entry"
+    },
+    "note": "Inert documentation only; host packages are intentionally absent from dependencies and peerDependencies."
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "^4.0.2",
+    "@deepseek-ai/dsh-client-locale": "0.1.5-rc.1",
+    "@deepseek-ai/dsh-client-ui-conversation": "0.1.5-rc.1",
+    "@deepseek-ai/dsh-client-ui-renderer": "0.1.5-rc.1",
+    "@deepseek-ai/dsh-client-ui-session": "0.1.5-rc.1",
+    "@deepseek-ai/dsh-client-ui-slots": "0.1.5-rc.1",
+    "@deepseek-ai/dsh-client-ui-theme": "0.1.5-rc.1",
+    "@deepseek-ai/dsh-client-ui-tool": "0.1.5-rc.1",
+    "@deepseek-ai/dsh-fs": "0.1.5-rc.1",
+    "@deepseek-ai/dsh-host-webserver": "0.1.5-rc.1",
+    "@deepseek-ai/dsh-sandbox-policy": "0.1.5-rc.1",
+    "@deepseek-ai/dsh-session": "0.1.5-rc.1",
+    "@deepseek-ai/dsh-tools": "0.1.5-rc.1",
+    "@types/node": "^26.2.0",
+    "@types/react": "~18.3.1",
+    "@types/react-dom": "~18.3.1",
+    "esbuild": "^0.28.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tsdown": "^0.22.2",
+    "typescript": "^6.0.3",
+    "ws": "^8.21.0"
+  }
+}
